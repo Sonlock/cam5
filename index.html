@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camara Web</title>
+    <style>
+        /* Estilos para visualizar la cámara en pantalla completa */
+        #videoElement {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón para activar la cámara -->
+    <button onclick="startCamera()">Activar Cámara</button>
+
+    <!-- Botón para desactivar la cámara -->
+    <button onclick="stopCamera()">Desactivar Cámara</button>
+
+    <!-- Barra de aumento para ajustar el zoom de la cámara -->
+    <input type="range" id="zoomRange" min="1" max="10" step="1" value="5" onchange="changeZoom()">
+
+    <!-- Elemento de video para mostrar la cámara -->
+    <video id="videoElement"></video>
+
+    <script>
+        // Función para activar la cámara
+        function startCamera() {
+            // Obtener el elemento de video y solicitar acceso a la cámara
+            const videoElement = document.getElementById('videoElement');
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    // Mostrar la cámara en el elemento de video
+                    videoElement.srcObject = stream;
+                })
+                .catch(error => {
+                    console.error('Error al acceder a la cámara:', error);
+                });
+        }
+
+        // Función para desactivar la cámara
+        function stopCamera() {
+            // Obtener el elemento de video y detener el stream de la cámara
+            const videoElement = document.getElementById('videoElement');
+            const stream = videoElement.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => {
+                    track.stop();
+                });
+                videoElement.srcObject = null;
+            }
+        }
+
+        // Función para cambiar el zoom de la cámara
+        function changeZoom() {
+            // Obtener el valor de la barra de aumento
+            const zoomValue = document.getElementById('zoomRange').value;
+            // Aplicar el valor de zoom al estilo de la cámara
+            const videoElement = document.getElementById('videoElement');
+            videoElement.style.transform = `scale(${zoomValue})`;
+        }
+    </script>
+</body>
+</html>
